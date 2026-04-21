@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Hà Thanh! 🎂</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: radial-gradient(ellipse at 50% 30%, #1e0a3c 0%, #0d0520 60%, #080318 100%);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+
+    #starCanvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── MAIN PAGE ── */
+    .content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 32px;
+    }
+
+    /* Title: "Happy Birthday" pixel, "Hà Thanh" Nunito */
+    .title {
+      text-align: center;
+      margin-bottom: 28px;
+      line-height: 1;
+    }
+    .title-en {
+      display: block;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      color: #FFE566;
+      text-shadow: 2px 2px 0 #E91E8C, 0 0 20px rgba(255,229,102,0.6);
+      animation: titleGlow 3s ease-in-out infinite;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .title-vn {
+      display: block;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      color: #FFE566;
+      text-shadow: 2px 2px 0 #E91E8C, 0 0 20px rgba(255,229,102,0.6);
+      animation: titleGlow 3s ease-in-out infinite;
+      letter-spacing: 0.5px;
+    }
+    @keyframes titleGlow {
+      0%,100% { text-shadow: 2px 2px 0 #E91E8C, 0 0 16px rgba(255,229,102,0.4); }
+      50%      { text-shadow: 2px 2px 0 #E91E8C, 0 0 32px rgba(255,229,102,0.9); }
+    }
+
+    #cakeCanvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+
+    .msg-btn {
+      margin-top: 28px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px; color: #fff;
+      background: #C2185B; border: none;
+      padding: 14px 22px; cursor: pointer;
+      letter-spacing: 1px;
+      box-shadow: 0 6px 0 #7B0033, 0 0 20px rgba(194,24,91,0.4);
+      transition: transform 0.08s, box-shadow 0.08s;
+      animation: btnPulse 2.5s ease-in-out infinite;
+    }
+    /* Vietnamese text on button → Nunito */
+    .msg-btn { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; }
+    @keyframes btnPulse {
+      0%,100% { box-shadow: 0 6px 0 #7B0033, 0 0 12px rgba(194,24,91,0.4); }
+      50%      { box-shadow: 0 6px 0 #7B0033, 0 0 28px rgba(255,64,129,0.7); }
+    }
+    .msg-btn:hover { filter: brightness(1.15); }
+    .msg-btn:active { transform: translateY(5px); box-shadow: 0 1px 0 #7B0033; }
+
+    .music-hint {
+      margin-top: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px; color: #a870e8;
+      opacity: 0.7;
+      animation: fadeBlink 2s ease-in-out infinite;
+    }
+    @keyframes fadeBlink { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
+
+    /* ── OVERLAY ── */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(5,1,18,0.85);
+      z-index: 200; align-items: center; justify-content: center;
+      padding: 12px;
+    }
+    .overlay.show { display: flex; }
+
+    .modal-scene {
+      display: flex; align-items: center;
+      justify-content: center;
+      gap: 18px; max-width: 1100px; width: 100%;
+    }
+
+    /* ── POLAROID ── */
+    .polaroid-col {
+      display: flex; flex-direction: column;
+      gap: 0; flex-shrink: 0;
+      width: 190px;
+      max-height: 88vh;
+      overflow-y: auto; overflow-x: visible;
+      padding: 12px 24px;
+      scrollbar-width: none;
+      align-items: center;
+    }
+    .polaroid-col::-webkit-scrollbar { display: none; }
+
+    .polaroid {
+      background: #fff;
+      padding: 7px 7px 28px 7px;
+      box-shadow: 3px 5px 16px rgba(0,0,0,0.45);
+      position: relative; flex-shrink: 0;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0s;
+      cursor: default;
+    }
+    .polaroid:hover {
+      transform: rotate(0deg) translateX(0) scale(1.1) !important;
+      z-index: 30 !important;
+      box-shadow: 6px 10px 28px rgba(0,0,0,0.6);
+    }
+    .polaroid img, .polaroid .p-placeholder {
+      display: block; width: 100%; object-fit: cover;
+    }
+    .polaroid .p-placeholder {
+      background: linear-gradient(135deg,#f8d0e8,#d8b8f8);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+    }
+    .polaroid .p-caption {
+      text-align: center; font-family: 'Nunito', sans-serif;
+      font-size: 9px; color: #999; margin-top: 6px; font-style: italic;
+    }
+
+    /* ── LETTER CARD ── */
+    .letter-card {
+      background: #FFF9F2; max-width: 460px; width: 100%;
+      padding: 32px 28px 24px; position: relative;
+      border: 3px solid #EBCFA4;
+      box-shadow: inset 0 0 0 2px #FFF5E0, 0 0 0 5px #C8962A, 10px 10px 0 rgba(0,0,0,0.3);
+      max-height: 92vh; overflow-y: auto; flex-shrink: 0;
+      animation: letterPop 0.4s cubic-bezier(0.175,0.885,0.32,1.4);
+    }
+    @keyframes letterPop {
+      from { transform: scale(0.35) rotate(-5deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0); opacity: 1; }
+    }
+    .letter-close {
+      position: absolute; top: 10px; right: 10px;
+      width: 28px; height: 28px;
+      background: #C2185B; border: none; color: #fff;
+      font-family: 'Nunito', sans-serif; font-weight: 700;
+      font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .letter-close:hover { background: #880E4F; }
+    .letter-icons { text-align: center; font-size: 24px; letter-spacing: 8px; margin-bottom: 10px; }
+    .letter-heading {
+      font-family: 'Nunito', sans-serif; font-weight: 800;
+      font-size: 18px; color: #C2185B;
+      text-align: center; margin-bottom: 16px; line-height: 1.5;
+    }
+    .letter-divider { border: none; border-top: 1px dashed #EAC4D0; margin: 14px 0; }
+    .letter-body {
+      font-family: 'Nunito', sans-serif; font-size: 15px;
+      line-height: 1.95; color: #3D2040; white-space: pre-line;
+    }
+    .letter-footer {
+      margin-top: 16px; text-align: right;
+      font-family: 'Nunito', sans-serif; font-style: italic;
+      font-size: 14px; color: #C2185B; line-height: 1.8;
+    }
+
+    /* ── FREE-DATE FORM ── */
+    .form-section {
+      margin-top: 16px;
+      background: #FFF5FB;
+      border: 1.5px dashed #F48FB1;
+      padding: 16px 14px 14px;
+    }
+    .form-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px; font-weight: 800;
+      color: #C2185B; margin-bottom: 5px;
+    }
+    .form-desc {
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px; color: #7A4070;
+      margin-bottom: 10px; line-height: 1.6;
+    }
+    .form-textarea {
+      width: 100%; min-height: 76px;
+      border: 2px solid #F48FB1;
+      background: #fff; padding: 9px 11px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px; color: #3D2040;
+      resize: vertical; outline: none; line-height: 1.6;
+    }
+    .form-textarea:focus { border-color: #C2185B; }
+    .form-textarea::placeholder { color: #C49ABE; font-style: italic; }
+    .form-submit {
+      margin-top: 10px; width: 100%;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700; font-size: 14px;
+      color: #fff; background: #C2185B; border: none;
+      padding: 12px 10px; cursor: pointer;
+      box-shadow: 0 4px 0 #7B0033;
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+    .form-submit:hover { filter: brightness(1.1); }
+    .form-submit:active { transform: translateY(3px); box-shadow: 0 1px 0 #7B0033; }
+    .form-submit:disabled { background: #bbb; box-shadow: 0 4px 0 #888; cursor: default; }
+    .form-success {
+      display: none; margin-top: 10px;
+      background: #E8F5E9; border-left: 3px solid #66BB6A;
+      padding: 10px 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13.5px; color: #2E7D32; line-height: 1.6;
+    }
+    .form-shake { animation: shake 0.35s ease; }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-5px)} 40%{transform:translateX(5px)}
+      60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+    }
+
+    /* ── CONFETTI ── */
+    #confettiCanvas {
+      position: fixed; inset: 0; pointer-events: none;
+      z-index: 150; width: 100%; height: 100%;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) { .polaroid-col { display: none; } }
+    @media (max-width: 500px) {
+      .letter-card { padding: 24px 18px 20px; }
+      .letter-body { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+
+<div class="content">
+  <div class="title">
+    <span class="title-en">Happy Birthday</span>
+    <span class="title-vn">Hà Thanh! ✨</span>
+  </div>
+  <canvas id="cakeCanvas" width="252" height="308"></canvas>
+  <button class="msg-btn" id="msgBtn">✉ Bạn có lời nhắn</button>
+  <div class="music-hint" id="musicHint">♪ nhấn bất kỳ để phát nhạc</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal-scene">
+
+    <!-- LEFT POLAROIDS (photos 1–5) -->
+    <div class="polaroid-col left">
+
+      <div class="polaroid" style="width:158px; margin-bottom:-28px; transform:rotate(-5deg) translateX(18px); z-index:5;">
+        <img src="photo 1.png" alt="" style="height:128px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:128px">🌸</div>
+        <div class="p-caption">Hà Thanh ♡</div>
+      </div>
+
+      <div class="polaroid" style="width:138px; margin-bottom:-22px; transform:rotate(4deg) translateX(-22px); z-index:4;">
+        <img src="photo 2.png" alt="" style="height:108px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:108px">🌷</div>
+        <div class="p-caption">ngày đẹp ✿</div>
+      </div>
+
+      <div class="polaroid" style="width:168px; margin-bottom:-30px; transform:rotate(-2.5deg) translateX(10px); z-index:3;">
+        <img src="photo 3.png" alt="" style="height:135px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:135px">🎀</div>
+        <div class="p-caption">kỷ niệm 🕯</div>
+      </div>
+
+      <div class="polaroid" style="width:148px; margin-bottom:-24px; transform:rotate(6deg) translateX(-16px); z-index:2;">
+        <img src="photo 4.png" alt="" style="height:118px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:118px">🫂</div>
+        <div class="p-caption">tụi mình ♡</div>
+      </div>
+
+      <div class="polaroid" style="width:155px; transform:rotate(-3.5deg) translateX(20px); z-index:1;">
+        <img src="photo 5.png" alt="" style="height:122px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:122px">📸</div>
+        <div class="p-caption">mãi bên nhau ✨</div>
+      </div>
+
+    </div>
+
+    <!-- LETTER -->
+    <div class="letter-card">
+      <button class="letter-close" id="closeBtn">✕</button>
+      <div class="letter-icons">🎂 🎉 🌸</div>
+      <div class="letter-heading">Gửi Hà Thanh yêu dấu ♡</div>
+      <hr class="letter-divider">
+      <div class="letter-body">Ngày 21 tháng 4 năm 2004, có một thiên thần bé nhỏ cất tiếng khóc chào đời — và từ đó, thế giới này trở nên dịu dàng hơn một chút.
+
+22 năm trôi qua, thiên thần ấy đã lớn thành một Hà Thanh thật tử tế, ấm áp và đáng yêu đến mức tụi mình không biết phải thương cách nào cho đủ.
+
+Thật biết ơn vì những năm 20 tuổi, Bảo Hân đã gặp được Hà Thanh — nhờ vậy mới có cơ hội quen biết một tâm hồn đáng yêu đến thế này.
+
+Chúc cho tương lai phía trước của Hà Thanh sẽ thật hạnh phúc, mỹ mãn và luôn được yêu thương ngập tràn — vì Hà Thanh xứng đáng với tất cả những điều tốt đẹp nhất. 🌸</div>
+      <hr class="letter-divider">
+
+      <!-- ✦ FORM NGÀY RẢNH ✦ -->
+      <div class="form-section">
+        <div class="form-title">📅 Bạn rảnh ngày nào?</div>
+        <div class="form-desc">Chúng mình cùng nhau ăn mừng ngày đặc biệt đó nha! 🎉</div>
+        <textarea class="form-textarea" id="freeDateInput"
+          placeholder="VD: Thứ 7 tuần sau chiều, hoặc Chủ nhật cả ngày..."></textarea>
+        <button class="form-submit" id="formSubmitBtn">💌 Gửi cho tụi mình!</button>
+        <div class="form-success" id="formSuccess">
+          ✅ Đã mở Gmail rồi nhé! Bạn chỉ cần nhấn <strong>Send</strong> là tụi mình nhận được liền 💕
+        </div>
+      </div>
+
+      <hr class="letter-divider">
+      <div class="letter-footer">Yêu thương thật nhiều 💕<br>— From: 🐏🦁🦂 with love</div>
+    </div>
+
+    <!-- RIGHT POLAROIDS (photos 6–10) -->
+    <div class="polaroid-col right">
+
+      <div class="polaroid" style="width:162px; margin-bottom:-26px; transform:rotate(5deg) translateX(-18px); z-index:5;">
+        <img src="photo 6.jpg" alt="" style="height:130px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:130px">💕</div>
+        <div class="p-caption">cùng nhau 💕</div>
+      </div>
+
+      <div class="polaroid" style="width:142px; margin-bottom:-22px; transform:rotate(-5.5deg) translateX(20px); z-index:4;">
+        <img src="photo 7.jpg" alt="" style="height:110px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:110px">🌼</div>
+        <div class="p-caption">vui lắm đó ✿</div>
+      </div>
+
+      <div class="polaroid" style="width:172px; margin-bottom:-30px; transform:rotate(2deg) translateX(-10px); z-index:3;">
+        <img src="photo 8.png" alt="" style="height:138px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:138px">🎉</div>
+        <div class="p-caption">nhớ mãi 🎉</div>
+      </div>
+
+      <div class="polaroid" style="width:145px; margin-bottom:-20px; transform:rotate(-6deg) translateX(16px); z-index:2;">
+        <img src="photo 9.png" alt="" style="height:114px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:114px">🥰</div>
+        <div class="p-caption">yêu lắm nha 🥰</div>
+      </div>
+
+      <div class="polaroid" style="width:158px; transform:rotate(4deg) translateX(-14px); z-index:1;">
+        <img src="photo 10.png" alt="" style="height:126px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="p-placeholder" style="display:none;height:126px">✨</div>
+        <div class="p-caption">best friends ✨</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+
+<script>
+// ════════════════════════════════════════
+//  STARS
+// ════════════════════════════════════════
+(function () {
+  const cv = document.getElementById('starCanvas');
+  const cx = cv.getContext('2d');
+  let stars = [];
+  function resize() {
+    cv.width = window.innerWidth; cv.height = window.innerHeight;
+    stars = Array.from({ length: 130 }, () => ({
+      x: Math.random() * cv.width, y: Math.random() * cv.height,
+      r: Math.random() * 1.4 + 0.4,
+      phase: Math.random() * Math.PI * 2,
+      spd: Math.random() * 0.025 + 0.008,
+    }));
+  }
+  function draw(t) {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    stars.forEach(s => {
+      const a = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * s.spd + s.phase));
+      cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      cx.fillStyle = `rgba(255,255,255,${a.toFixed(2)})`; cx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', resize);
+  resize(); requestAnimationFrame(draw);
+})();
+
+// ════════════════════════════════════════
+//  PIXEL ART CAKE
+// ════════════════════════════════════════
+(function () {
+  const cv  = document.getElementById('cakeCanvas');
+  const ctx = cv.getContext('2d');
+  const PS  = 14;
+  const _ = null;
+  const Y = '#FFD166', P = '#FF9EC4', T = '#FFD4E8', F = '#E91E8C';
+  const C = '#FFF0C0', B = '#7A4520', D = '#C8A060', E = '#FFFAEE';
+  const S = '#FF4488', G = '#55CC99', V = '#CC88FF';
+  const MAP = [
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,C,_,_,_,C,_,_,_,C,_,_,_,_],
+    [_,_,_,_,_,C,_,_,_,C,_,_,_,C,_,_,_,_],
+    [_,_,_,_,_,C,_,_,_,C,_,_,_,C,_,_,_,_],
+    [_,_,_,T,T,T,T,T,T,T,T,T,T,T,T,_,_,_],
+    [_,_,_,P,P,P,P,P,P,P,P,P,P,P,P,_,_,_],
+    [_,_,_,Y,Y,S,Y,Y,Y,Y,Y,G,Y,Y,Y,_,_,_],
+    [_,_,_,Y,Y,Y,Y,V,Y,Y,Y,Y,Y,S,Y,_,_,_],
+    [_,_,_,B,B,B,B,B,B,B,B,B,B,B,B,_,_,_],
+    [_,P,T,P,P,F,P,P,P,F,P,P,F,P,P,T,P,_],
+    [_,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,_],
+    [_,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,_],
+    [_,Y,S,Y,Y,V,Y,Y,G,Y,Y,Y,S,Y,Y,V,Y,_],
+    [_,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,_],
+    [F,P,P,F,P,P,P,F,P,P,F,P,P,P,F,P,P,F],
+    [E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E],
+    [Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y],
+    [Y,S,Y,Y,Y,V,Y,Y,G,Y,Y,S,Y,Y,Y,V,Y,Y],
+    [B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+    [_,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,_],
+    [_,_,D,D,D,D,D,D,D,D,D,D,D,D,D,D,_,_],
+  ];
+  const CANDLE_COLS = [5, 9, 13];
+  function px(col, row, color) {
+    if (!color) return;
+    ctx.fillStyle = color;
+    ctx.fillRect(col * PS, row * PS, PS, PS);
+  }
+  let frame = 0;
+  function drawFlames() {
+    CANDLE_COLS.forEach((col, i) => {
+      const t  = frame * 0.07 + i * 1.4;
+      const f1 = 0.5 + 0.5 * Math.sin(t);
+      const f2 = 0.5 + 0.5 * Math.sin(t * 1.6 + 0.8);
+      const cx2 = col * PS + PS / 2, cy2 = PS / 2;
+      const grad = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, PS * 1.8);
+      grad.addColorStop(0,   `rgba(255,220,50,${(0.35 + f1 * 0.35).toFixed(2)})`);
+      grad.addColorStop(0.5, `rgba(255,140,0,${(0.15 + f2 * 0.15).toFixed(2)})`);
+      grad.addColorStop(1,   'rgba(255,80,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(cx2, cy2, PS * 1.8, 0, Math.PI * 2); ctx.fill();
+      px(col, 0, f1 > 0.6 ? '#FFF8A0' : '#FFE040');
+      px(col, 1, f2 > 0.55 ? '#FF9900' : '#FF6600');
+      if (f1 > 0.78 && Math.random() > 0.5) {
+        const side = Math.random() > 0.5 ? 1 : -1;
+        ctx.globalAlpha = 0.4; px(col + side, 1, '#FFBB33'); ctx.globalAlpha = 1;
+      }
+    });
+  }
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    MAP.forEach((row, r) => row.forEach((color, c) => px(c, r, color)));
+    drawFlames();
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ════════════════════════════════════════
+//  HAPPY BIRTHDAY MUSIC
+// ════════════════════════════════════════
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null, musicPlaying = false, musicLoop = null;
+const NOTE = {
+  G4:392.00, A4:440.00, B4:493.88,
+  C5:523.25, D5:587.33, E5:659.25, F5:698.46, G5:784.00
+};
+const HB = [
+  ['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
+  ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
+  ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',2],
+  ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',3]
+];
+function playNote(freq, start, dur, ctx) {
+  const osc = ctx.createOscillator(), gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, start);
+  gain.gain.setValueAtTime(0, start);
+  gain.gain.linearRampToValueAtTime(0.18, start + 0.015);
+  gain.gain.setValueAtTime(0.18, start + dur - 0.04);
+  gain.gain.linearRampToValueAtTime(0, start + dur);
+  osc.start(start); osc.stop(start + dur + 0.01);
+}
+function playHB(ctx) {
+  const beat = 60 / 108; let t = ctx.currentTime + 0.05;
+  HB.forEach(([n, d]) => { if (NOTE[n]) playNote(NOTE[n], t, d * beat * 0.88, ctx); t += d * beat; });
+  return (t - ctx.currentTime) * 1000;
+}
+function startMusic() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  musicPlaying = true;
+  document.getElementById('musicHint').textContent = '♫ nhạc đang phát';
+  const dur = playHB(audioCtx);
+  musicLoop = setTimeout(function loop() {
+    if (!musicPlaying) return;
+    musicLoop = setTimeout(loop, playHB(audioCtx) + 200);
+  }, dur + 200);
+}
+function tryStartMusic() {
+  if (!musicPlaying) startMusic();
+  document.removeEventListener('click', tryStartMusic);
+  document.removeEventListener('keydown', tryStartMusic);
+  document.removeEventListener('touchstart', tryStartMusic);
+}
+document.addEventListener('click', tryStartMusic);
+document.addEventListener('keydown', tryStartMusic);
+document.addEventListener('touchstart', tryStartMusic);
+
+// ════════════════════════════════════════
+//  FORM → GỬI EMAIL (Gmail)
+// ════════════════════════════════════════
+document.getElementById('formSubmitBtn').addEventListener('click', function () {
+  const input = document.getElementById('freeDateInput');
+  const text  = input.value.trim();
+
+  // Shake nếu để trống
+  if (!text) {
+    input.classList.remove('form-shake');
+    void input.offsetWidth;
+    input.classList.add('form-shake');
+    input.focus();
+    return;
+  }
+
+  // Tạo mailto link → mở Gmail app / email client
+  const to      = 'vivienne.baohan@gmail.com';
+  const subject = encodeURIComponent('🎂 Hà Thanh báo ngày rảnh!');
+  const body    = encodeURIComponent(
+    `Hà Thanh nhắn:\n\n"${text}"\n\n— gửi từ web sinh nhật 🌸`
+  );
+  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+
+  // Hiện thông báo thành công
+  document.getElementById('formSuccess').style.display = 'block';
+  this.disabled = true;
+  this.textContent = '✓ Đã mở email!';
+  input.disabled = true;
+});
+
+// ════════════════════════════════════════
+//  MODAL
+// ════════════════════════════════════════
+const overlay  = document.getElementById('overlay');
+const msgBtn   = document.getElementById('msgBtn');
+const closeBtn = document.getElementById('closeBtn');
+
+function openLetter()  { overlay.classList.add('show');    launchConfetti(); }
+function closeLetter() {
+  overlay.classList.remove('show'); stopConfetti();
+  const inp = document.getElementById('freeDateInput');
+  const btn = document.getElementById('formSubmitBtn');
+  const suc = document.getElementById('formSuccess');
+  if (inp) { inp.value = ''; inp.disabled = false; }
+  if (btn) { btn.disabled = false; btn.textContent = '💌 Gửi cho tụi mình!'; }
+  if (suc) suc.style.display = 'none';
+}
+msgBtn.addEventListener('click', openLetter);
+closeBtn.addEventListener('click', closeLetter);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeLetter(); });
+
+// ════════════════════════════════════════
+//  CONFETTI
+// ════════════════════════════════════════
+let confettiRAF = null;
+function launchConfetti() {
+  const cv = document.getElementById('confettiCanvas');
+  cv.width = window.innerWidth; cv.height = window.innerHeight;
+  const ctx = cv.getContext('2d');
+  const COLS = ['#FF78A8','#FFE566','#66DDFF','#FF9EC4','#BB88FF','#66EEB8','#FF6060'];
+  const pieces = Array.from({ length: 110 }, () => ({
+    x: Math.random() * cv.width, y: -Math.random() * cv.height * 0.5,
+    w: Math.random() * 9 + 4, h: Math.random() * 5 + 4,
+    col: COLS[Math.floor(Math.random() * COLS.length)],
+    rot: Math.random() * Math.PI * 2, rspd: (Math.random() - 0.5) * 0.18,
+    vx: (Math.random() - 0.5) * 2.5, vy: Math.random() * 3.5 + 1.5,
+  }));
+  function draw() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    pieces.forEach(p => {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.col; ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+      p.x += p.vx; p.y += p.vy; p.rot += p.rspd;
+      if (p.y > cv.height + 20) { p.y = -20; p.x = Math.random() * cv.width; }
+    });
+    confettiRAF = requestAnimationFrame(draw);
+  }
+  if (confettiRAF) cancelAnimationFrame(confettiRAF);
+  draw();
+}
+function stopConfetti() {
+  if (confettiRAF) { cancelAnimationFrame(confettiRAF); confettiRAF = null; }
+  document.getElementById('confettiCanvas').getContext('2d')
+    .clearRect(0, 0, window.innerWidth, window.innerHeight);
+}
+</script>
+</body>
+</html>
