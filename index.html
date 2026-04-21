@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Happy Birthday Hà Thanh! 🎂</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: radial-gradient(ellipse at 50% 30%, #1e0a3c 0%, #0d0520 60%, #080318 100%);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+
+    /* ══ STARS ══ */
+    #starCanvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ══ MAIN PAGE ══ */
+    .content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 36px;
+      width: 100%;
+    }
+
+    .title { text-align: center; margin-bottom: 24px; }
+    .title-en {
+      display: block;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px; color: #FFE566;
+      letter-spacing: 1px; margin-bottom: 10px;
+      text-shadow: 2px 2px 0 #E91E8C;
+      animation: glow 3s ease-in-out infinite;
+    }
+    .title-vn {
+      display: block;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800; font-size: 26px;
+      color: #FFE566; letter-spacing: 0.5px;
+      text-shadow: 2px 2px 0 #E91E8C;
+      animation: glow 3s ease-in-out infinite;
+    }
+    @keyframes glow {
+      0%,100% { text-shadow: 2px 2px 0 #E91E8C, 0 0 12px rgba(255,229,102,0.4); }
+      50%      { text-shadow: 2px 2px 0 #E91E8C, 0 0 28px rgba(255,229,102,0.9); }
+    }
+
+    #cakeCanvas {
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      max-width: 100%;
+    }
+
+    .msg-btn {
+      margin-top: 26px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700; font-size: 15px;
+      color: #fff; background: #C2185B; border: none;
+      padding: 14px 28px; cursor: pointer;
+      box-shadow: 0 6px 0 #7B0033, 0 0 18px rgba(194,24,91,0.4);
+      transition: transform 0.08s, box-shadow 0.08s;
+      animation: btnPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes btnPulse {
+      0%,100% { box-shadow: 0 6px 0 #7B0033, 0 0 12px rgba(194,24,91,0.35); }
+      50%      { box-shadow: 0 6px 0 #7B0033, 0 0 26px rgba(255,64,129,0.7); }
+    }
+    .msg-btn:hover  { filter: brightness(1.12); }
+    .msg-btn:active { transform: translateY(5px); box-shadow: 0 1px 0 #7B0033; }
+
+    .music-hint {
+      margin-top: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px; color: #a870e8; opacity: 0.7;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:0.35} 50%{opacity:0.9} }
+
+    /* ══ OVERLAY ══ */
+    .overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(5,1,18,0.88);
+      z-index: 200;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .overlay.show { display: block; }
+
+    /* ══ DESKTOP: side-by-side ══ */
+    .modal-desktop {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      min-height: 100%;
+      padding: 16px 12px;
+    }
+
+    /* ══ POLAROID COLUMNS (desktop) ══ */
+    .polaroid-col {
+      display: flex; flex-direction: column;
+      gap: 0; flex-shrink: 0; width: 190px;
+      max-height: 90vh;
+      overflow-y: auto; overflow-x: visible;
+      padding: 12px 20px;
+      scrollbar-width: none; align-items: center;
+    }
+    .polaroid-col::-webkit-scrollbar { display: none; }
+
+    /* ══ POLAROID CARD ══ */
+    .polaroid {
+      background: #fff;
+      padding: 7px 7px 28px 7px;
+      box-shadow: 3px 5px 14px rgba(0,0,0,0.45);
+      position: relative; flex-shrink: 0;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      cursor: default;
+    }
+    .polaroid:hover {
+      transform: rotate(0deg) translateX(0) scale(1.1) !important;
+      z-index: 30 !important;
+      box-shadow: 6px 10px 26px rgba(0,0,0,0.6);
+    }
+    .polaroid img, .polaroid .p-ph {
+      display: block; width: 100%; object-fit: cover;
+    }
+    .polaroid .p-ph {
+      background: linear-gradient(135deg,#f8d0e8,#d8b8f8);
+      align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    .polaroid .p-cap {
+      text-align: center; font-family: 'Nunito', sans-serif;
+      font-size: 9px; color: #999; margin-top: 6px; font-style: italic;
+    }
+
+    /* ══ LETTER CARD ══ */
+    .letter-card {
+      background: #FFF9F2;
+      max-width: 460px; width: 100%;
+      padding: 32px 28px 24px;
+      position: relative;
+      border: 3px solid #EBCFA4;
+      box-shadow: inset 0 0 0 2px #FFF5E0, 0 0 0 5px #C8962A, 10px 10px 0 rgba(0,0,0,0.28);
+      flex-shrink: 0;
+      animation: pop 0.38s cubic-bezier(0.175,0.885,0.32,1.4);
+    }
+    @keyframes pop {
+      from { transform: scale(0.35) rotate(-5deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .letter-close {
+      position: absolute; top: 10px; right: 10px;
+      width: 32px; height: 32px;
+      background: #C2185B; border: none; color: #fff;
+      font-family: 'Nunito', sans-serif; font-weight: 700;
+      font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .letter-close:hover { background: #880E4F; }
+
+    .letter-icons { text-align: center; font-size: 22px; letter-spacing: 8px; margin-bottom: 10px; }
+    .letter-heading {
+      font-family: 'Nunito', sans-serif; font-weight: 800;
+      font-size: 18px; color: #C2185B;
+      text-align: center; margin-bottom: 14px; line-height: 1.5;
+    }
+    .letter-divider { border: none; border-top: 1px dashed #EAC4D0; margin: 13px 0; }
+    .letter-body {
+      font-family: 'Nunito', sans-serif; font-size: 15px;
+      line-height: 1.95; color: #3D2040; white-space: pre-line;
+    }
+    .letter-footer {
+      margin-top: 14px; text-align: right;
+      font-family: 'Nunito', sans-serif; font-style: italic;
+      font-size: 14px; color: #C2185B; line-height: 1.8;
+    }
+
+    /* ══ FORM ══ */
+    .form-section {
+      margin-top: 16px; background: #FFF5FB;
+      border: 1.5px dashed #F48FB1;
+      padding: 15px 14px 14px;
+    }
+    .form-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px; font-weight: 800;
+      color: #C2185B; margin-bottom: 4px;
+    }
+    .form-desc {
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px; color: #7A4070;
+      margin-bottom: 10px; line-height: 1.6;
+    }
+    .form-textarea {
+      width: 100%; min-height: 72px;
+      border: 2px solid #F48FB1; background: #fff;
+      padding: 9px 11px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px; color: #3D2040;
+      resize: vertical; outline: none; line-height: 1.6;
+    }
+    .form-textarea:focus { border-color: #C2185B; }
+    .form-textarea::placeholder { color: #C49ABE; font-style: italic; }
+    .form-submit {
+      margin-top: 10px; width: 100%;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700; font-size: 14px;
+      color: #fff; background: #C2185B; border: none;
+      padding: 13px 10px; cursor: pointer;
+      box-shadow: 0 4px 0 #7B0033;
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+    .form-submit:hover  { filter: brightness(1.1); }
+    .form-submit:active { transform: translateY(3px); box-shadow: 0 1px 0 #7B0033; }
+    .form-submit:disabled { background: #bbb; box-shadow: 0 4px 0 #888; cursor: default; }
+    .form-success {
+      display: none; margin-top: 10px;
+      background: #E8F5E9; border-left: 3px solid #66BB6A;
+      padding: 10px 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13.5px; color: #2E7D32; line-height: 1.6;
+    }
+    .form-shake { animation: shake 0.35s ease; }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-5px)} 40%{transform:translateX(5px)}
+      60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+    }
+
+    /* ══ MOBILE PHOTO STRIP ══ */
+    .photo-strip-mobile {
+      display: none;
+      overflow-x: auto; overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 14px 12px 8px;
+      gap: 10px;
+      background: rgba(10,2,24,0.6);
+      flex-shrink: 0;
+    }
+    .photo-strip-mobile::-webkit-scrollbar { display: none; }
+    .photo-strip-mobile .polaroid {
+      width: 90px !important;
+      padding: 5px 5px 20px 5px !important;
+      flex-shrink: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .photo-strip-mobile .polaroid img,
+    .photo-strip-mobile .polaroid .p-ph {
+      width: 80px !important; height: 74px !important;
+    }
+    .photo-strip-mobile .p-ph  { font-size: 18px; }
+    .photo-strip-mobile .p-cap { font-size: 8px; white-space: nowrap; }
+
+    /* ══ CONFETTI ══ */
+    #confettiCanvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 150;
+      width: 100%; height: 100%;
+    }
+
+    /* ══════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════ */
+
+    /* Tablet / phone — ẩn cột ảnh desktop, hiện strip ngang */
+    @media (max-width: 900px) {
+      .polaroid-col        { display: none !important; }
+      .photo-strip-mobile  { display: flex; }
+
+      /* Modal trải dọc toàn màn hình */
+      .modal-desktop {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 0; padding: 0;
+        min-height: 100%;
+      }
+
+      /* Letter card full width */
+      .letter-card {
+        max-width: 100%; width: 100%;
+        border-left: none; border-right: none;
+        box-shadow: inset 0 0 0 2px #FFF5E0;
+        animation: none;
+      }
+    }
+
+    /* Small phone */
+    @media (max-width: 430px) {
+      .title-en    { font-size: 9px; }
+      .title-vn    { font-size: 20px; }
+      /* Scale cake xuống nếu màn hình nhỏ */
+      #cakeCanvas  {
+        width: 210px !important;
+        height: 257px !important;
+      }
+      .letter-card    { padding: 20px 14px 20px; }
+      .letter-heading { font-size: 15px; }
+      .letter-body    { font-size: 14px; }
+      .letter-footer  { font-size: 13px; }
+      .form-title     { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+
+<!-- ══ MAIN PAGE ══ -->
+<div class="content">
+  <div class="title">
+    <span class="title-en">Happy Birthday</span>
+    <span class="title-vn">Hà Thanh! ✨</span>
+  </div>
+  <canvas id="cakeCanvas" width="252" height="308"></canvas>
+  <button class="msg-btn" id="msgBtn">✉ Bạn có lời nhắn</button>
+  <div class="music-hint" id="musicHint">♪ nhấn bất kỳ để phát nhạc</div>
+</div>
+
+<!-- ══ OVERLAY ══ -->
+<div class="overlay" id="overlay">
+  <div class="modal-desktop">
+
+    <!-- [MOBILE] Dải ảnh cuộn ngang -->
+    <div class="photo-strip-mobile">
+      <div class="polaroid" style="transform:rotate(-3deg)">
+        <img src="photo 1.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">🌸</div><div class="p-cap">Hà Thanh ♡</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(2.5deg)">
+        <img src="photo 2.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">🌷</div><div class="p-cap">ngày đẹp ✿</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(-4deg)">
+        <img src="photo 3.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">🎀</div><div class="p-cap">kỷ niệm 🕯</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(3deg)">
+        <img src="photo 4.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">🫂</div><div class="p-cap">tụi mình ♡</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(-2deg)">
+        <img src="photo 5.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">📸</div><div class="p-cap">mãi bên nhau ✨</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(4deg)">
+        <img src="photo 6.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">💕</div><div class="p-cap">cùng nhau 💕</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(-3.5deg)">
+        <img src="photo 7.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">🌼</div><div class="p-cap">vui lắm đó ✿</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(2deg)">
+        <img src="photo 8.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">🎉</div><div class="p-cap">nhớ mãi 🎉</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(-4.5deg)">
+        <img src="photo 9.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">🥰</div><div class="p-cap">yêu lắm nha 🥰</div>
+      </div>
+      <div class="polaroid" style="transform:rotate(3.5deg)">
+        <img src="photo 10.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none">✨</div><div class="p-cap">best friends ✨</div>
+      </div>
+    </div>
+
+    <!-- [DESKTOP] Cột ảnh trái -->
+    <div class="polaroid-col">
+      <div class="polaroid" style="width:158px;margin-bottom:-28px;transform:rotate(-5deg) translateX(18px);z-index:5">
+        <img src="photo 1.png" alt="" style="height:128px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:128px">🌸</div><div class="p-cap">Hà Thanh ♡</div>
+      </div>
+      <div class="polaroid" style="width:138px;margin-bottom:-22px;transform:rotate(4deg) translateX(-22px);z-index:4">
+        <img src="photo 2.png" alt="" style="height:108px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:108px">🌷</div><div class="p-cap">ngày đẹp ✿</div>
+      </div>
+      <div class="polaroid" style="width:168px;margin-bottom:-30px;transform:rotate(-2.5deg) translateX(10px);z-index:3">
+        <img src="photo 3.png" alt="" style="height:135px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:135px">🎀</div><div class="p-cap">kỷ niệm 🕯</div>
+      </div>
+      <div class="polaroid" style="width:148px;margin-bottom:-24px;transform:rotate(6deg) translateX(-16px);z-index:2">
+        <img src="photo 4.png" alt="" style="height:118px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:118px">🫂</div><div class="p-cap">tụi mình ♡</div>
+      </div>
+      <div class="polaroid" style="width:155px;transform:rotate(-3.5deg) translateX(20px);z-index:1">
+        <img src="photo 5.png" alt="" style="height:122px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:122px">📸</div><div class="p-cap">mãi bên nhau ✨</div>
+      </div>
+    </div>
+
+    <!-- LETTER CARD -->
+    <div class="letter-card">
+      <button class="letter-close" id="closeBtn">✕</button>
+      <div class="letter-icons">🎂 🎉 🌸</div>
+      <div class="letter-heading">Gửi Hà Thanh yêu dấu ♡</div>
+      <hr class="letter-divider">
+      <div class="letter-body">Ngày 21 tháng 4 năm 2004, có một thiên thần bé nhỏ cất tiếng khóc chào đời — và từ đó, thế giới này trở nên dịu dàng hơn một chút.
+
+22 năm trôi qua, thiên thần ấy đã lớn thành một Hà Thanh thật tử tế, ấm áp và đáng yêu đến mức tụi mình không biết phải thương cách nào cho đủ.
+
+Thật biết ơn vì những năm 20 tuổi, Bảo Hân đã gặp được Hà Thanh — nhờ vậy mới có cơ hội quen biết một tâm hồn đáng yêu đến thế này.
+
+Chúc cho tương lai phía trước của Hà Thanh sẽ thật hạnh phúc, mỹ mãn và luôn được yêu thương ngập tràn — vì Hà Thanh xứng đáng với tất cả những điều tốt đẹp nhất. 🌸</div>
+      <hr class="letter-divider">
+      <div class="form-section">
+        <div class="form-title">📅 Bạn rảnh ngày nào?</div>
+        <div class="form-desc">Chúng mình cùng nhau ăn mừng ngày đặc biệt đó nha! 🎉</div>
+        <textarea class="form-textarea" id="freeDateInput"
+          placeholder="VD: Thứ 7 tuần sau chiều, hoặc Chủ nhật cả ngày..."></textarea>
+        <button class="form-submit" id="formSubmitBtn">💌 Gửi cho tụi mình!</button>
+        <div class="form-success" id="formSuccess">
+          ✅ Đã mở Gmail rồi nhé! Bạn chỉ cần nhấn <strong>Send</strong> là tụi mình nhận được liền 💕
+        </div>
+      </div>
+      <hr class="letter-divider">
+      <div class="letter-footer">Yêu thương thật nhiều 💕<br>— From: 🐏🦁🦂 with love</div>
+    </div>
+
+    <!-- [DESKTOP] Cột ảnh phải -->
+    <div class="polaroid-col">
+      <div class="polaroid" style="width:162px;margin-bottom:-26px;transform:rotate(5deg) translateX(-18px);z-index:5">
+        <img src="photo 6.jpg" alt="" style="height:130px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:130px">💕</div><div class="p-cap">cùng nhau 💕</div>
+      </div>
+      <div class="polaroid" style="width:142px;margin-bottom:-22px;transform:rotate(-5.5deg) translateX(20px);z-index:4">
+        <img src="photo 7.jpg" alt="" style="height:110px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:110px">🌼</div><div class="p-cap">vui lắm đó ✿</div>
+      </div>
+      <div class="polaroid" style="width:172px;margin-bottom:-30px;transform:rotate(2deg) translateX(-10px);z-index:3">
+        <img src="photo 8.png" alt="" style="height:138px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:138px">🎉</div><div class="p-cap">nhớ mãi 🎉</div>
+      </div>
+      <div class="polaroid" style="width:145px;margin-bottom:-20px;transform:rotate(-6deg) translateX(16px);z-index:2">
+        <img src="photo 9.png" alt="" style="height:114px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:114px">🥰</div><div class="p-cap">yêu lắm nha 🥰</div>
+      </div>
+      <div class="polaroid" style="width:158px;transform:rotate(4deg) translateX(-14px);z-index:1">
+        <img src="photo 10.png" alt="" style="height:126px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="p-ph" style="display:none;height:126px">✨</div><div class="p-cap">best friends ✨</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+
+<script>
+// ══ STARS ══════════════════════════════
+(function(){
+  const cv=document.getElementById('starCanvas'),cx=cv.getContext('2d');let st=[];
+  function resize(){cv.width=innerWidth;cv.height=innerHeight;st=Array.from({length:120},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.4+0.4,ph:Math.random()*Math.PI*2,sp:Math.random()*0.025+0.008}));}
+  function draw(t){cx.clearRect(0,0,cv.width,cv.height);st.forEach(s=>{const a=0.2+0.8*(0.5+0.5*Math.sin(t*s.sp+s.ph));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`rgba(255,255,255,${a.toFixed(2)})`;cx.fill();});requestAnimationFrame(draw);}
+  window.addEventListener('resize',resize);resize();requestAnimationFrame(draw);
+})();
+
+// ══ PIXEL CAKE ═════════════════════════
+(function(){
+  const cv=document.getElementById('cakeCanvas'),ctx=cv.getContext('2d'),PS=14;
+  const _=null,Y='#FFD166',P='#FF9EC4',T='#FFD4E8',F='#E91E8C',C='#FFF0C0',B='#7A4520',D='#C8A060',E='#FFFAEE',S='#FF4488',G='#55CC99',V='#CC88FF';
+  const MAP=[[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[_,_,_,_,_,C,_,_,_,C,_,_,_,C,_,_,_,_],[_,_,_,_,_,C,_,_,_,C,_,_,_,C,_,_,_,_],[_,_,_,_,_,C,_,_,_,C,_,_,_,C,_,_,_,_],[_,_,_,T,T,T,T,T,T,T,T,T,T,T,T,_,_,_],[_,_,_,P,P,P,P,P,P,P,P,P,P,P,P,_,_,_],[_,_,_,Y,Y,S,Y,Y,Y,Y,Y,G,Y,Y,Y,_,_,_],[_,_,_,Y,Y,Y,Y,V,Y,Y,Y,Y,Y,S,Y,_,_,_],[_,_,_,B,B,B,B,B,B,B,B,B,B,B,B,_,_,_],[_,P,T,P,P,F,P,P,P,F,P,P,F,P,P,T,P,_],[_,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,_],[_,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,_],[_,Y,S,Y,Y,V,Y,Y,G,Y,Y,Y,S,Y,Y,V,Y,_],[_,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,_],[F,P,P,F,P,P,P,F,P,P,F,P,P,P,F,P,P,F],[E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E],[Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y],[Y,S,Y,Y,Y,V,Y,Y,G,Y,Y,S,Y,Y,Y,V,Y,Y],[B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B],[_,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,_],[_,_,D,D,D,D,D,D,D,D,D,D,D,D,D,D,_,_]];
+  const CC=[5,9,13];let fr=0;
+  function px(c,r,col){if(!col)return;ctx.fillStyle=col;ctx.fillRect(c*PS,r*PS,PS,PS);}
+  function flames(){CC.forEach((col,i)=>{const t=fr*0.07+i*1.4,f1=0.5+0.5*Math.sin(t),f2=0.5+0.5*Math.sin(t*1.6+0.8),cx2=col*PS+PS/2,cy2=PS/2,g=ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,PS*1.8);g.addColorStop(0,`rgba(255,220,50,${(0.35+f1*0.35).toFixed(2)})`);g.addColorStop(0.5,`rgba(255,140,0,${(0.15+f2*0.15).toFixed(2)})`);g.addColorStop(1,'rgba(255,80,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx2,cy2,PS*1.8,0,Math.PI*2);ctx.fill();px(col,0,f1>0.6?'#FFF8A0':'#FFE040');px(col,1,f2>0.55?'#FF9900':'#FF6600');if(f1>0.78&&Math.random()>0.5){const s=Math.random()>0.5?1:-1;ctx.globalAlpha=0.4;px(col+s,1,'#FFBB33');ctx.globalAlpha=1;}});}
+  function draw(){fr++;ctx.clearRect(0,0,cv.width,cv.height);MAP.forEach((row,r)=>row.forEach((c,col)=>px(col,r,c)));flames();requestAnimationFrame(draw);}
+  draw();
+})();
+
+// ══ MUSIC ══════════════════════════════
+const AudioCtx=window.AudioContext||window.webkitAudioContext;
+let audioCtx=null,playing=false,loopT=null;
+const N={G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:784};
+const HB=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',2],['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',3]];
+function note(f,t0,d,ctx){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='triangle';o.frequency.setValueAtTime(f,t0);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(0.18,t0+0.015);g.gain.setValueAtTime(0.18,t0+d-0.04);g.gain.linearRampToValueAtTime(0,t0+d);o.start(t0);o.stop(t0+d+0.01);}
+function playHB(ctx){const b=60/108;let t=ctx.currentTime+0.05;HB.forEach(([n,d])=>{if(N[n])note(N[n],t,d*b*0.88,ctx);t+=d*b;});return(t-ctx.currentTime)*1000;}
+function startMusic(){if(!audioCtx)audioCtx=new AudioCtx();if(audioCtx.state==='suspended')audioCtx.resume();playing=true;document.getElementById('musicHint').textContent='♫ nhạc đang phát';const d=playHB(audioCtx);loopT=setTimeout(function L(){if(!playing)return;loopT=setTimeout(L,playHB(audioCtx)+200);},d+200);}
+function tryMusic(){if(!playing)startMusic();document.removeEventListener('click',tryMusic);document.removeEventListener('keydown',tryMusic);document.removeEventListener('touchstart',tryMusic);}
+document.addEventListener('click',tryMusic);document.addEventListener('keydown',tryMusic);document.addEventListener('touchstart',tryMusic);
+
+// ══ FORM ════════════════════════════════
+document.getElementById('formSubmitBtn').addEventListener('click',function(){
+  const inp=document.getElementById('freeDateInput'),txt=inp.value.trim();
+  if(!txt){inp.classList.remove('form-shake');void inp.offsetWidth;inp.classList.add('form-shake');inp.focus();return;}
+  const sub=encodeURIComponent('🎂 Hà Thanh báo ngày rảnh!'),bod=encodeURIComponent(`Hà Thanh nhắn:\n\n"${txt}"\n\n— gửi từ web sinh nhật 🌸`);
+  window.location.href=`mailto:vivienne.baohan@gmail.com?subject=${sub}&body=${bod}`;
+  document.getElementById('formSuccess').style.display='block';
+  this.disabled=true;this.textContent='✓ Đã mở email!';inp.disabled=true;
+});
+
+// ══ MODAL ═══════════════════════════════
+const overlay=document.getElementById('overlay'),msgBtn=document.getElementById('msgBtn'),closeBtn=document.getElementById('closeBtn');
+function openLetter(){overlay.classList.add('show');overlay.scrollTop=0;launchConfetti();}
+function closeLetter(){
+  overlay.classList.remove('show');stopConfetti();
+  const i=document.getElementById('freeDateInput'),b=document.getElementById('formSubmitBtn'),s=document.getElementById('formSuccess');
+  if(i){i.value='';i.disabled=false;}if(b){b.disabled=false;b.textContent='💌 Gửi cho tụi mình!';}if(s)s.style.display='none';
+}
+msgBtn.addEventListener('click',openLetter);
+closeBtn.addEventListener('click',closeLetter);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeLetter();});
+
+// ══ CONFETTI ════════════════════════════
+let craf=null;
+function launchConfetti(){
+  const cv=document.getElementById('confettiCanvas');cv.width=innerWidth;cv.height=innerHeight;
+  const ctx=cv.getContext('2d'),COLS=['#FF78A8','#FFE566','#66DDFF','#FF9EC4','#BB88FF','#66EEB8','#FF6060'];
+  const p=Array.from({length:100},()=>({x:Math.random()*cv.width,y:-Math.random()*cv.height*0.5,w:Math.random()*9+4,h:Math.random()*5+4,col:COLS[Math.floor(Math.random()*COLS.length)],rot:Math.random()*Math.PI*2,rs:(Math.random()-0.5)*0.18,vx:(Math.random()-0.5)*2.5,vy:Math.random()*3.5+1.5}));
+  function draw(){ctx.clearRect(0,0,cv.width,cv.height);p.forEach(q=>{ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.rot);ctx.fillStyle=q.col;ctx.fillRect(-q.w/2,-q.h/2,q.w,q.h);ctx.restore();q.x+=q.vx;q.y+=q.vy;q.rot+=q.rs;if(q.y>cv.height+20){q.y=-20;q.x=Math.random()*cv.width;}});craf=requestAnimationFrame(draw);}
+  if(craf)cancelAnimationFrame(craf);draw();
+}
+function stopConfetti(){if(craf){cancelAnimationFrame(craf);craf=null;}document.getElementById('confettiCanvas').getContext('2d').clearRect(0,0,innerWidth,innerHeight);}
+</script>
+</body>
+</html>
